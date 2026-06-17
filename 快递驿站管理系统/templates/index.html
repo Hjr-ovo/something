@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校园快递驿站包裹管理系统</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: #f0f2f5;
+            color: #333;
+            min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .hidden { display: none !important; }
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-primary { background: #1890ff; color: #fff; }
+        .btn-primary:hover { background: #40a9ff; }
+        .btn-success { background: #52c41a; color: #fff; }
+        .btn-success:hover { background: #73d13d; }
+        .btn-danger { background: #ff4d4f; color: #fff; }
+        .btn-danger:hover { background: #ff7875; }
+        .btn-warning { background: #faad14; color: #fff; }
+        .btn-warning:hover { background: #ffc53d; }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #d9d9d9;
+            color: #333;
+        }
+        .btn-outline:hover { border-color: #1890ff; color: #1890ff; }
+        .btn-sm { padding: 4px 12px; font-size: 12px; }
+
+        input, select {
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+            width: 100%;
+        }
+        input:focus, select:focus { border-color: #1890ff; box-shadow: 0 0 0 2px rgba(24,144,255,0.2); }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 500;
+            font-size: 14px;
+            color: #555;
+        }
+        .form-row { display: flex; gap: 12px; }
+        .form-row > * { flex: 1; }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 12px 0;
+            font-size: 14px;
+        }
+        .alert-success { background: #f6ffed; border: 1px solid #b7eb8f; color: #389e0d; }
+        .alert-error { background: #fff2f0; border: 1px solid #ffccc7; color: #cf1322; }
+        .alert-info { background: #e6f7ff; border: 1px solid #91d5ff; color: #096dd9; }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .badge-success { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
+        .badge-danger { background: #fff2f0; color: #ff4d4f; border: 1px solid #ffccc7; }
+        .badge-warning { background: #fffbe6; color: #faad14; border: 1px solid #ffe58f; }
+        .badge-info { background: #e6f7ff; color: #1890ff; border: 1px solid #91d5ff; }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid #e8e8e8;
+            border-top-color: #1890ff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .navbar {
+            background: #001529;
+            color: #fff;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 56px;
+        }
+        .navbar-brand {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 14px;
+        }
+        .navbar-user .role-tag {
+            background: rgba(255,255,255,0.15);
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+
+        .login-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        .login-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+        }
+        .login-card h1 {
+            text-align: center;
+            margin-bottom: 8px;
+            font-size: 24px;
+            color: #001529;
+        }
+        .login-card .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 28px;
+            font-size: 14px;
+        }
+        .login-tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .login-tabs button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: none;
+            font-size: 14px;
+            cursor: pointer;
+            color: #888;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+        .login-tabs button.active {
+            color: #1890ff;
+            border-bottom-color: #1890ff;
+            font-weight: 600;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            text-align: center;
+        }
+        .stat-card .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1890ff;
+        }
+        .stat-card .stat-label {
+            font-size: 14px;
+            color: #888;
+            margin-top: 4px;
+        }
+        .stat-card.green .stat-number { color: #52c41a; }
+        .stat-card.red .stat-number { color: #ff4d4f; }
+        .stat-card.orange .stat-number { color: #faad14; }
+
+        .table-wrapper { overflow-x: auto; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        th { background: #fafafa; font-weight: 600; color: #555; white-space: nowrap; }
+        tr:hover td { background: #fafafa; }
+        .table-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.45);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal {
+            background: #fff;
+            border-radius: 12px;
+            padding: 28px;
+            width: 90%;
+            max-width: 760px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .modal h2 { margin-bottom: 20px; font-size: 20px; }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row { flex-direction: column; }
+            .navbar { padding: 0 12px; }
+            .login-card { padding: 24px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #bbb;
+        }
+        .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+        .empty-state p { font-size: 16px; }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            z-index: 2000;
+            animation: slideIn 0.3s ease;
+        }
+        .toast-success { background: #52c41a; }
+        .toast-error { background: #ff4d4f; }
+        .toast-info { background: #1890ff; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* 收件人列表样式 */
+        .recipient-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2px;
+        }
+        .recipient-item:hover { background: #f0f5ff; }
+        .recipient-item.selected { background: #e6f7ff; border: 1px solid #91d5ff; }
+        .recipient-item .recipient-name { font-weight: 500; font-size: 14px; }
+        .recipient-item .recipient-user { color: #888; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar hidden" id="navbar">
+        <div class="navbar-brand">
+            <span>📦 校园快递驿站</span>
+        </div>
+        <div class="navbar-user">
+            <span>👤 <span id="navDisplayName"></span></span>
+            <span class="role-tag" id="navRoleTag"></span>
+            <button class="btn btn-outline btn-sm" style="color:#fff;border-color:rgba(255,255,255,0.3)" onclick="logout()">退出登录</button>
+        </div>
+    </nav>
+
+    <div id="app"></div>
+    <div id="toastContainer"></div>
+    <div id="modalContainer"></div>
+
+    <script>
+        const API_BASE = '';
+
+        async function api(url, options = {}) {
+            const resp = await fetch(API_BASE + url, {
+                headers: { 'Content-Type': 'application/json', ...options.headers },
+                ...options
+            });
+            return resp.json();
+        }
+
+        function toast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const el = document.createElement('div');
+            el.className = `toast toast-${type}`;
+            el.textContent = message;
+            container.appendChild(el);
+            setTimeout(() => { el.remove(); }, 3000);
+        }
+
+        function showModal(html) {
+            document.getElementById('modalContainer').innerHTML = `
+                <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+                    <div class="modal">${html}</div>
+                </div>
+            `;
+        }
+
+        function closeModal() {
+            document.getElementById('modalContainer').innerHTML = '';
+        }
+
+        let currentUser = null;
+
+        function renderLogin() {
+            const app = document.getElementById('app');
+            app.innerHTML = `
+                <div class="login-page">
+                    <div class="login-card">
+                        <h1>📦 校园快递驿站</h1>
+                        <p class="subtitle">包裹管理系统</p>
+                        <div class="login-tabs" id="loginTabs">
+                            <button class="active" onclick="switchLoginTab('login')">登录</button>
+                            <button onclick="switchLoginTab('register')">注册</button>
+                        </div>
+                        <div id="loginForm">
+                            <div class="form-group">
+                                <label>用户名</label>
+                                <input type="text" id="loginUser" placeholder="请输入用户名">
+                            </div>
+                            <div class="form-group">
+                                <label>密码</label>
+                                <input type="password" id="loginPass" placeholder="请输入密码">
+                            </div>
+                            <button class="btn btn-primary" style="width:100%;justify-content:center;padding:10px" onclick="doLogin()">登 录</button>
+                            <div id="loginError" class="hidden"></div>
+                        </div>
+                        <div id="registerForm" class="hidden">
+                            <div class="form-group">
+                                <label>用户名</label>
+                                <input type="text" id="regUser" placeholder="设置用户名">
+                            </div>
+                            <div class="form-group">
+                                <label>密码</label>
+                                <input type="password" id="regPass" placeholder="设置密码">
+                            </div>
+                            <div class="form-group">
+                                <label>显示名称（可选）</label>
+                                <input type="text" id="regName" placeholder="如：张三">
+                            </div>
+                            <button class="btn btn-success" style="width:100%;justify-content:center;padding:10px" onclick="doRegister()">注 册</button>
+                            <div id="regError" class="hidden"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('navbar').classList.add('hidden');
+        }
+
+        function switchLoginTab(tab) {
+            document.querySelectorAll('#loginTabs button').forEach(b => b.classList.remove('active'));
+            if (tab === 'login') {
+                document.querySelector('#loginTabs button:first-child').classList.add('active');
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('registerForm').classList.add('hidden');
+            } else {
+                document.querySelector('#loginTabs button:last-child').classList.add('active');
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('registerForm').classList.remove('hidden');
+            }
+        }
+
+        async function doLogin() {
+            const username = document.getElementById('loginUser').value.trim();
+            const password = document.getElementById('loginPass').value.trim();
+            const errorEl = document.getElementById('loginError');
+
+            if (!username || !password) {
+                errorEl.className = 'alert alert-error';
+                errorEl.textContent = '请输入用户名和密码';
+                return;
+            }
+
+            const result = await api('/api/login', {
+                method: 'POST',
+                body: JSON.stringify({ username, password })
+            });
+
+            if (result.success) {
+                currentUser = result.user;
+                toast(result.message, 'success');
+                renderDashboard();
+            } else {
+                errorEl.className = 'alert alert-error';
+                errorEl.textContent = result.message;
+            }
+        }
+
+        async function doRegister() {
+            const username = document.getElementById('regUser').value.trim();
+            const password = document.getElementById('regPass').value.trim();
+            const display_name = document.getElementById('regName').value.trim();
+            const errorEl = document.getElementById('regError');
+
+            if (!username || !password) {
+                errorEl.className = 'alert alert-error';
+                errorEl.textContent = '用户名和密码不能为空';
+                return;
+            }
+
+            const result = await api('/api/register', {
+                method: 'POST',
+                body: JSON.stringify({ username, password, display_name })
+            });
+
+            if (result.success) {
+                toast(result.message, 'success');
+                switchLoginTab('login');
+                document.getElementById('loginUser').value = username;
+            } else {
+                errorEl.className = 'alert alert-error';
+                errorEl.textContent = result.message;
+            }
+        }
+
+        async function logout() {
+            await api('/api/logout', { method: 'POST' });
+            currentUser = null;
+            renderLogin();
+        }
+
+        // ================================================================
+        //  仪表盘
+        // ================================================================
+        async function renderDashboard() {
+            if (!currentUser) return;
+            const isAdmin = currentUser.role === 'admin';
+
+            document.getElementById('navbar').classList.remove('hidden');
+            document.getElementById('navDisplayName').textContent = currentUser.display_name;
+            document.getElementById('navRoleTag').textContent = isAdmin ? '库存管理员' : '取件人';
+
+            const app = document.getElementById('app');
+            app.innerHTML = '<div class="container"><div class="loading">加载中...</div></div>';
+
+            const [statsStatus, statsCourier, pkgRes] = await Promise.all([
+                api('/api/statistics/status'),
+                api('/api/statistics/courier'),
+                api('/api/packages')
+            ]);
+
+            const packages = pkgRes.packages || [];
+            const unclaimed = statsStatus.unclaimed || 0;
+            const claimed = statsStatus.claimed || 0;
+            const total = statsStatus.total || 0;
+
+            // 标题：管理员显示"所有包裹"，取件人显示"我的包裹"
+            const tableTitle = isAdmin ? '📋 所有包裹' : '📋 我的包裹';
+
+            app.innerHTML = `
+                <div class="container">
+                    <div class="stats-grid">
+                        <div class="stat-card"><div class="stat-number">${total}</div><div class="stat-label">包裹总数</div></div>
+                        <div class="stat-card green"><div class="stat-number">${claimed}</div><div class="stat-label">已取件</div></div>
+                        <div class="stat-card red"><div class="stat-number">${unclaimed}</div><div class="stat-label">未取件</div></div>
+                    </div>
+
+                    ${!isAdmin ? `
+                    <div class="card" style="border-left:4px solid #1890ff">
+                        <h2 style="font-size:18px;margin-bottom:16px">🔍 取件查询</h2>
+                        <p style="color:#888;font-size:14px;margin-bottom:16px">请输入您的取件码，查询包裹信息并一键取件</p>
+                        <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap">
+                            <div style="flex:1;min-width:200px">
+                                <label style="display:block;margin-bottom:4px;font-weight:500;font-size:14px;color:#555">取件码</label>
+                                <input type="text" id="queryPickupCode" placeholder="请输入取件码，如 A001" style="max-width:300px">
+                            </div>
+                            <div style="display:flex;gap:8px">
+                                <button class="btn btn-primary" onclick="queryPackage()">🔍 查询</button>
+                                <button class="btn btn-success" id="queryClaimBtn" class="hidden" onclick="claimFromQuery()" style="display:none">📦 立即取件</button>
+                            </div>
+                        </div>
+                        <div id="queryResult" style="margin-top:16px;display:none">
+                            <div class="card" style="background:#fafafa;border:1px solid #e8e8e8;margin-top:8px" id="queryResultCard"></div>
+                        </div>
+                        <div id="queryError" style="margin-top:12px;display:none"></div>
+                    </div>
+                    ` : ''}
+
+                    <div class="card">
+                        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+                            <h2 style="font-size:18px">${tableTitle}</h2>
+                            <div style="display:flex;gap:8px;flex-wrap:wrap">
+                                ${isAdmin ? `
+                                    <button class="btn btn-primary" onclick="showAddPackageModal()">+ 入库</button>
+                                    <button class="btn btn-warning" onclick="deleteOverdue()">删除超时</button>
+                                ` : ''}
+                                <button class="btn btn-outline" onclick="showStatsModal()">统计</button>
+                            </div>
+                        </div>
+
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>单号</th>
+                                        <th>收件人</th>
+                                        <th>取件码</th>
+                                        <th>快递类型</th>
+                                        <th>入库时间</th>
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="packageTableBody"></tbody>
+                            </table>
+                        </div>
+                        <div id="emptyState" class="empty-state hidden">
+                            <div class="icon">📭</div>
+                            <p>暂无包裹记录</p>
+                        </div>
+                    </div>
+
+                    ${isAdmin ? `
+                    <div class="card">
+                        <h2 style="font-size:16px;margin-bottom:12px">📊 快递公司分布</h2>
+                        <div id="courierChart" style="display:flex;gap:16px;flex-wrap:wrap"></div>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+
+            // 填充表格
+            const tbody = document.getElementById('packageTableBody');
+            const emptyState = document.getElementById('emptyState');
+
+            if (packages.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                tbody.innerHTML = packages.map(p => {
+                    const statusBadge = p.is_claimed
+                        ? '<span class="badge badge-success">已取件</span>'
+                        : p.is_overdue
+                            ? '<span class="badge badge-danger">超时未取</span>'
+                            : '<span class="badge badge-warning">未取件</span>';
+
+                    let actionBtns = '';
+                    if (isAdmin) {
+                        actionBtns = `
+                            ${!p.is_claimed ? `<button class="btn btn-success btn-sm" onclick="markClaimed('${p.tracking_number}')">标记取件</button>` : ''}
+                            <button class="btn btn-danger btn-sm" onclick="deletePackage('${p.tracking_number}')">删除</button>
+                        `;
+                    } else {
+                        if (!p.is_claimed) {
+                            actionBtns = `<button class="btn btn-success btn-sm" onclick="claimMyPackage('${p.pickup_code}')">📦 领取</button>`;
+                        } else {
+                            actionBtns = `<span style="color:#bbb">已领取</span>`;
+                        }
+                    }
+
+                    return `
+                        <tr>
+                            <td><strong>${p.tracking_number}</strong></td>
+                            <td>${p.recipient_name}</td>
+                            <td><span class="badge badge-info">${p.pickup_code}</span></td>
+                            <td>${p.courier_type}</td>
+                            <td>${p.storage_time}</td>
+                            <td>${statusBadge}</td>
+                            <td class="table-actions">${actionBtns}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            // 快递公司分布
+            const chartEl = document.getElementById('courierChart');
+            if (statsCourier.data && statsCourier.data.length > 0) {
+                const colors = ['#1890ff','#52c41a','#faad14','#ff4d4f','#722ed1','#13c2c2','#eb2f96'];
+                chartEl.innerHTML = statsCourier.data.map((item, i) => `
+                    <div style="flex:1;min-width:100px;background:#fafafa;border-radius:8px;padding:12px;text-align:center">
+                        <div style="font-size:24px;font-weight:700;color:${colors[i % colors.length]}">${item.count}</div>
+                        <div style="font-size:13px;color:#888;margin-top:4px">${item.name}</div>
+                    </div>
+                `).join('');
+            } else {
+                chartEl.innerHTML = '<div style="color:#bbb;padding:20px">暂无数据</div>';
+            }
+        }
+
+        // ================================================================
+        //  操作功能
+        // ================================================================
+
+        // ================================================================
+        //  分栏式包裹入库
+        // ================================================================
+
+        // 入库暂存数据
+        let addPkgPending = [];
+        let addPkgSelectedRecipient = null; // { username, display_name }
+
+        async function showAddPackageModal() {
+            addPkgPending = [];
+            addPkgSelectedRecipient = null;
+
+            const res = await api('/api/recipients');
+            const recipients = res.recipients || [];
+
+            const courierOptions = [
+                '顺丰', '中通', '圆通', '韵达', '申通', '极兔', '京东', '邮政', '德邦', '其他'
+            ];
+
+            let recipientListHtml = '';
+            if (recipients.length > 0) {
+                recipientListHtml = recipients.map(r => `
+                    <div class="recipient-item" data-username="${r.username}" data-name="${r.display_name}"
+                         onclick="selectRecipient(this, '${r.username}', '${r.display_name}')">
+                        <span class="recipient-name">${r.display_name}</span>
+                        <span class="recipient-user">@${r.username}</span>
+                    </div>
+                `).join('');
+            } else {
+                recipientListHtml = '<div style="color:#bbb;padding:16px;text-align:center">暂无取件人，请先注册</div>';
+            }
+
+            showModal(`
+                <h2>📥 包裹入库</h2>
+                <div style="display:flex;gap:20px;min-height:360px">
+                    <!-- 左栏：收件人选择 -->
+                    <div style="flex:1;border-right:1px solid #f0f0f0;padding-right:16px">
+                        <div style="font-weight:600;color:#555;margin-bottom:10px;font-size:14px">👤 选择收件人</div>
+                        <input type="text" id="recipientSearch" placeholder="🔍 搜索取件人..." oninput="filterRecipients(this.value)" style="margin-bottom:10px">
+                        <div id="recipientList" style="max-height:260px;overflow-y:auto;margin-bottom:10px">
+                            ${recipientListHtml}
+                        </div>
+                        <button class="btn btn-outline btn-sm" onclick="showNewRecipientForm()" style="width:100%;justify-content:center">+ 新建收件人</button>
+                        <div id="newRecipientForm" class="hidden" style="margin-top:10px;padding:10px;background:#fafafa;border-radius:8px">
+                            <div class="form-group" style="margin-bottom:8px">
+                                <label style="font-size:12px">姓名</label>
+                                <input type="text" id="newRecName" placeholder="如：张三">
+                            </div>
+                            <div class="form-group" style="margin-bottom:8px">
+                                <label style="font-size:12px">用户名</label>
+                                <input type="text" id="newRecUser" placeholder="如：zhangsan">
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="createNewRecipient()" style="width:100%;justify-content:center">确认创建</button>
+                        </div>
+                        <div id="selectedRecipientInfo" class="hidden" style="margin-top:10px;padding:10px;background:#e6f7ff;border-radius:8px;border:1px solid #91d5ff">
+                            <div style="font-size:13px;color:#096dd9">✅ 已选择：<strong id="selectedRecName"></strong></div>
+                        </div>
+                    </div>
+
+                    <!-- 右栏：包裹信息 -->
+                    <div style="flex:1.5;padding-left:4px">
+                        <div style="font-weight:600;color:#555;margin-bottom:10px;font-size:14px">📦 包裹信息</div>
+                        <div id="packageInputArea">
+                            <div class="pkg-row" style="display:flex;gap:8px;margin-bottom:8px">
+                                <input type="text" class="pkg-tracking" placeholder="包裹单号 *" style="flex:2">
+                                <select class="pkg-courier" style="flex:1">
+                                    ${courierOptions.map(c => `<option value="${c}">${c}</option>`).join('')}
+                                </select>
+                                <button class="btn btn-danger btn-sm" onclick="removePkgRow(this)" style="flex-shrink:0">✕</button>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline btn-sm" onclick="addPkgRow()" style="margin-bottom:12px">+ 继续添加</button>
+
+                        <!-- 待入库列表 -->
+                        <div id="pendingList" style="max-height:200px;overflow-y:auto;background:#fafafa;border-radius:8px;padding:8px"></div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top:1px solid #f0f0f0;padding-top:16px;margin-top:12px">
+                    <button class="btn btn-outline" onclick="closeModal()">取消</button>
+                    <button class="btn btn-primary" onclick="doBatchAddPackage()">✅ 确认入库</button>
+                </div>
+                <div id="addError" class="hidden"></div>
+            `);
+
+            // 初始化第一行
+            updatePendingList();
+        }
+
+        // 选择收件人
+        function selectRecipient(el, username, displayName) {
+            document.querySelectorAll('.recipient-item').forEach(i => i.classList.remove('selected'));
+            el.classList.add('selected');
+            addPkgSelectedRecipient = { username, display_name: displayName };
+            document.getElementById('selectedRecipientInfo').classList.remove('hidden');
+            document.getElementById('selectedRecName').textContent = displayName;
+        }
+
+        // 搜索过滤收件人
+        function filterRecipients(query) {
+            const items = document.querySelectorAll('.recipient-item');
+            const q = query.toLowerCase();
+            items.forEach(item => {
+                const name = item.querySelector('.recipient-name').textContent.toLowerCase();
+                const user = item.querySelector('.recipient-user').textContent.toLowerCase();
+                item.style.display = (name.includes(q) || user.includes(q)) ? '' : 'none';
+            });
+        }
+
+        // 新建收件人
+        function showNewRecipientForm() {
+            document.getElementById('newRecipientForm').classList.toggle('hidden');
+        }
+
+        async function createNewRecipient() {
+            const name = document.getElementById('newRecName').value.trim();
+            const username = document.getElementById('newRecUser').value.trim();
+            if (!name || !username) {
+                toast('请输入姓名和用户名', 'error');
+                return;
+            }
+            const result = await api('/api/register', {
+                method: 'POST',
+                body: JSON.stringify({ username, password: '123456', display_name: name })
+            });
+            if (result.success) {
+                // 添加到列表并选中
+                const list = document.getElementById('recipientList');
+                const div = document.createElement('div');
+                div.className = 'recipient-item selected';
+                div.dataset.username = username;
+                div.dataset.name = name;
+                div.onclick = function() { selectRecipient(this, username, name); };
+                div.innerHTML = `<span class="recipient-name">${name}</span><span class="recipient-user">@${username}</span>`;
+                // 取消其他选中
+                list.querySelectorAll('.recipient-item').forEach(i => i.classList.remove('selected'));
+                list.insertBefore(div, list.firstChild);
+                addPkgSelectedRecipient = { username, display_name: name };
+                document.getElementById('selectedRecipientInfo').classList.remove('hidden');
+                document.getElementById('selectedRecName').textContent = name;
+                document.getElementById('newRecipientForm').classList.add('hidden');
+                toast(`已创建取件人 ${name}，默认密码 123456`, 'success');
+            } else {
+                toast('创建失败，用户名可能已存在', 'error');
+            }
+        }
+
+        // 包裹行操作
+        function addPkgRow() {
+            const area = document.getElementById('packageInputArea');
+            const courierOptions = ['顺丰','中通','圆通','韵达','申通','极兔','京东','邮政','德邦','其他'];
+            const div = document.createElement('div');
+            div.className = 'pkg-row';
+            div.style.cssText = 'display:flex;gap:8px;margin-bottom:8px';
+            div.innerHTML = `
+                <input type="text" class="pkg-tracking" placeholder="包裹单号 *" style="flex:2">
+                <select class="pkg-courier" style="flex:1">
+                    ${courierOptions.map(c => `<option value="${c}">${c}</option>`).join('')}
+                </select>
+                <button class="btn btn-danger btn-sm" onclick="removePkgRow(this)" style="flex-shrink:0">✕</button>
+            `;
+            area.appendChild(div);
+        }
+
+        function removePkgRow(btn) {
+            const row = btn.closest('.pkg-row');
+            const area = document.getElementById('packageInputArea');
+            if (area.querySelectorAll('.pkg-row').length <= 1) {
+                // 只剩一行时清空而不是删除
+                row.querySelector('.pkg-tracking').value = '';
+                return;
+            }
+            row.remove();
+            updatePendingList();
+        }
+
+        // 更新待入库列表
+        function updatePendingList() {
+            const list = document.getElementById('pendingList');
+            if (!list) return;
+            const rows = document.querySelectorAll('.pkg-row');
+            const items = [];
+            rows.forEach(row => {
+                const tracking = row.querySelector('.pkg-tracking').value.trim();
+                const courier = row.querySelector('.pkg-courier').value;
+                if (tracking) {
+                    items.push({ tracking, courier });
+                }
+            });
+            addPkgPending = items;
+
+            if (items.length === 0) {
+                list.innerHTML = '<div style="color:#bbb;padding:10px;text-align:center;font-size:13px">暂无待入库包裹</div>';
+                return;
+            }
+
+            list.innerHTML = items.map((item, i) => `
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-bottom:1px solid #eee;font-size:13px">
+                    <span><strong>${item.tracking}</strong> <span style="color:#888">(${item.courier})</span></span>
+                    <span style="color:#52c41a;font-size:11px">待入库</span>
+                </div>
+            `).join('') + `
+                <div style="display:flex;justify-content:space-between;padding:8px;font-size:13px;font-weight:600;color:#333;background:#fff;border-radius:0 0 8px 8px">
+                    <span>共 ${items.length} 个包裹</span>
+                </div>
+            `;
+        }
+
+        // 输入变化时更新列表
+        document.addEventListener('input', function(e) {
+            if (e.target.closest('#packageInputArea')) {
+                updatePendingList();
+            }
+        });
+
+        // 确认批量入库
+        async function doBatchAddPackage() {
+            // 重新收集数据
+            const rows = document.querySelectorAll('.pkg-row');
+            const packages = [];
+            rows.forEach(row => {
+                const tracking = row.querySelector('.pkg-tracking').value.trim();
+                const courier = row.querySelector('.pkg-courier').value;
+                if (tracking) {
+                    packages.push({ tracking_number: tracking, courier_type: courier });
+                }
+            });
+
+            if (!addPkgSelectedRecipient) {
+                document.getElementById('addError').className = 'alert alert-error';
+                document.getElementById('addError').textContent = '请选择收件人';
+                return;
+            }
+
+            if (packages.length === 0) {
+                document.getElementById('addError').className = 'alert alert-error';
+                document.getElementById('addError').textContent = '请至少输入一个包裹单号';
+                return;
+            }
+
+            const result = await api('/api/packages/batch', {
+                method: 'POST',
+                body: JSON.stringify({
+                    recipient_username: addPkgSelectedRecipient.username,
+                    recipient_name: addPkgSelectedRecipient.display_name,
+                    packages: packages
+                })
+            });
+
+            if (result.success) {
+                const pickupCodes = result.results.map(r => `${r.tracking_number} → ${r.pickup_code}`).join('\n');
+                toast(`🎉 ${result.message}`, 'success');
+                closeModal();
+                renderDashboard();
+                // 延迟显示取件码明细
+                setTimeout(() => {
+                    alert(`入库成功！取件码明细：\n${pickupCodes}`);
+                }, 300);
+            } else {
+                document.getElementById('addError').className = 'alert alert-error';
+                document.getElementById('addError').textContent = result.message;
+            }
+        }
+
+        // 取件人：一键领取自己的包裹
+        async function claimMyPackage(pickupCode) {
+            if (!confirm(`确定要领取取件码为 ${pickupCode} 的包裹吗？`)) return;
+
+            const result = await api('/api/packages/claim', {
+                method: 'PUT',
+                body: JSON.stringify({ pickup_code: pickupCode })
+            });
+
+            if (result.success) {
+                toast('🎉 取件成功！', 'success');
+                renderDashboard();
+            } else {
+                toast(result.message, 'error');
+            }
+        }
+
+        // ================================================================
+        //  取件查询功能
+        // ================================================================
+        let queryCurrentPkg = null; // 当前查询到的包裹
+
+        async function queryPackage() {
+            const input = document.getElementById('queryPickupCode');
+            const pickupCode = input.value.trim();
+            const resultCard = document.getElementById('queryResult');
+            const resultInner = document.getElementById('queryResultCard');
+            const errorDiv = document.getElementById('queryError');
+            const claimBtn = document.getElementById('queryClaimBtn');
+
+            // 隐藏之前的结果
+            resultCard.style.display = 'none';
+            errorDiv.style.display = 'none';
+            claimBtn.style.display = 'none';
+            queryCurrentPkg = null;
+
+            if (!pickupCode) {
+                errorDiv.innerHTML = '<div class="alert alert-error">请输入取件码</div>';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            const result = await api(`/api/packages/query?pickup_code=${encodeURIComponent(pickupCode)}`);
+
+            if (!result.success) {
+                errorDiv.innerHTML = `<div class="alert alert-error">${result.message}</div>`;
+                errorDiv.style.display = 'block';
+                toast(result.message, 'error');
+                return;
+            }
+
+            queryCurrentPkg = result.package;
+            const p = result.package;
+            const statusBadge = p.is_claimed
+                ? '<span class="badge badge-success">已取件</span>'
+                : p.is_overdue
+                    ? '<span class="badge badge-danger">超时未取</span>'
+                    : '<span class="badge badge-warning">未取件</span>';
+
+            resultInner.innerHTML = `
+                <div style="padding:16px">
+                    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+                        <h3 style="font-size:16px;margin:0">包裹详情</h3>
+                        ${statusBadge}
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;font-size:14px">
+                        <div><span style="color:#888">单号：</span><strong>${p.tracking_number}</strong></div>
+                        <div><span style="color:#888">取件码：</span><span class="badge badge-info" style="font-size:14px">${p.pickup_code}</span></div>
+                        <div><span style="color:#888">收件人：</span>${p.recipient_name}</div>
+                        <div><span style="color:#888">快递公司：</span>${p.courier_type}</div>
+                        <div><span style="color:#888">入库时间：</span>${p.storage_time}</div>
+                        <div><span style="color:#888">状态：</span>${p.status}</div>
+                    </div>
+                </div>
+            `;
+            resultCard.style.display = 'block';
+
+            if (!p.is_claimed) {
+                claimBtn.style.display = 'inline-flex';
+                claimBtn.textContent = '📦 立即取件';
+            }
+
+            toast('查询成功！', 'success');
+        }
+
+        async function claimFromQuery() {
+            if (!queryCurrentPkg) return;
+            if (!confirm(`确定要领取取件码为 ${queryCurrentPkg.pickup_code} 的包裹（${queryCurrentPkg.tracking_number}）吗？`)) return;
+
+            const result = await api('/api/packages/claim', {
+                method: 'PUT',
+                body: JSON.stringify({ pickup_code: queryCurrentPkg.pickup_code })
+            });
+
+            if (result.success) {
+                toast('🎉 取件成功！', 'success');
+                queryCurrentPkg = null;
+                renderDashboard();
+            } else {
+                toast(result.message, 'error');
+            }
+        }
+
+        async function markClaimed(trackingNumber) {
+            if (!confirm(`确定将包裹 ${trackingNumber} 标记为已取件？`)) return;
+            const result = await api('/api/packages/mark-claimed', {
+                method: 'PUT',
+                body: JSON.stringify({ tracking_number: trackingNumber })
+            });
+            if (result.success) {
+                toast(result.message, 'success');
+                renderDashboard();
+            } else {
+                toast(result.message, 'error');
+            }
+        }
+
+        async function deletePackage(trackingNumber) {
+            if (!confirm(`确定要删除包裹 ${trackingNumber} 吗？此操作不可恢复。`)) return;
+            const result = await api(`/api/packages/${trackingNumber}`, { method: 'DELETE' });
+            if (result.success) {
+                toast(result.message, 'success');
+                renderDashboard();
+            } else {
+                toast(result.message, 'error');
+            }
+        }
+
+        async function deleteOverdue() {
+            const days = prompt('请输入超时天数（默认3天）：', '3');
+            if (days === null) return;
+            const d = parseInt(days) || 3;
+            const result = await api(`/api/packages/overdue?days=${d}`, { method: 'DELETE' });
+            toast(result.message, result.count > 0 ? 'success' : 'info');
+            renderDashboard();
+        }
+
+        async function showStatsModal() {
+            const [status, courier] = await Promise.all([
+                api('/api/statistics/status'),
+                api('/api/statistics/courier')
+            ]);
+
+            let courierHtml = '';
+            if (courier.data && courier.data.length > 0) {
+                courierHtml = '<table style="margin-top:8px"><thead><tr><th>快递公司</th><th>数量</th></tr></thead><tbody>' +
+                    courier.data.map(c => `<tr><td>${c.name}</td><td><strong>${c.count}</strong></td></tr>`).join('') +
+                    `<tr style="font-weight:600;background:#fafafa"><td>总计</td><td>${courier.total}</td></tr>` +
+                    '</tbody></table>';
+            } else {
+                courierHtml = '<p style="color:#bbb">暂无数据</p>';
+            }
+
+            showModal(`
+                <h2>📊 统计信息</h2>
+                <div style="display:flex;gap:16px;margin-bottom:20px">
+                    <div style="flex:1;background:#f6ffed;border-radius:8px;padding:16px;text-align:center">
+                        <div style="font-size:28px;font-weight:700;color:#52c41a">${status.claimed}</div>
+                        <div style="font-size:13px;color:#888">已取件</div>
+                    </div>
+                    <div style="flex:1;background:#fff2f0;border-radius:8px;padding:16px;text-align:center">
+                        <div style="font-size:28px;font-weight:700;color:#ff4d4f">${status.unclaimed}</div>
+                        <div style="font-size:13px;color:#888">未取件</div>
+                    </div>
+                    <div style="flex:1;background:#e6f7ff;border-radius:8px;padding:16px;text-align:center">
+                        <div style="font-size:28px;font-weight:700;color:#1890ff">${status.total}</div>
+                        <div style="font-size:13px;color:#888">总计</div>
+                    </div>
+                </div>
+                <h3 style="font-size:15px;margin-bottom:8px">快递公司分布</h3>
+                ${courierHtml}
+                <div class="modal-footer">
+                    <button class="btn btn-outline" onclick="closeModal()">关闭</button>
+                </div>
+            `);
+        }
+
+        async function init() {
+            const session = await api('/api/session');
+            if (session.logged_in) {
+                currentUser = session.user;
+                renderDashboard();
+            } else {
+                renderLogin();
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const loginForm = document.getElementById('loginForm');
+                if (loginForm && !loginForm.classList.contains('hidden')) {
+                    doLogin();
+                }
+            }
+        });
+
+        init();
+    </script>
+</body>
+</html>
