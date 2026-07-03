@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>widget</class>
+ <widget class="QWidget" name="widget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>681</width>
+    <height>616</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>统计薪资</string>
+  </property>
+  <widget class="QPlainTextEdit" name="TextEdit">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>40</y>
+     <width>441</width>
+     <height>381</height>
+    </rect>
+   </property>
+   <property name="placeholderText">
+    <string>请输入薪资信息</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="Button">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>490</y>
+     <width>83</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>统计</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
