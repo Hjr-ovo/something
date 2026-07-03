@@ -1,3 +1,24 @@
+# 本文件演示了如何使用 PySide6.QtUiTools.QUiLoader 类从 UI 文件中动态加载 UI 定义，并创建相应的窗口对象。
+
+'''
+样例表
+
+薛蟠     4560 25
+薛蝌     4460 25
+薛宝钗   35776 23
+薛宝琴   14346 18
+王夫人   43360 45
+王熙凤   24460 25
+王子腾   55660 45
+王仁     15034 65
+尤二姐   5324 24
+贾芹     5663 25
+贾兰     13443 35
+贾芸     4522 25
+尤三姐   5905 22
+贾珍     54603 35
+'''
+
 from PySide6.QtWidgets import QApplication, QMessageBox
 from PySide6.QtUiTools import QUiLoader
  
