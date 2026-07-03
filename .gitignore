@@ -28,3 +28,6 @@ Thumbs.db
 
 # Data (keep structure but ignore runtime data if needed)
 # packages.txt and users.txt are kept for demo purposes
+
+# Cline memory - personal notes, do not upload to GitHub
+.clinerules
