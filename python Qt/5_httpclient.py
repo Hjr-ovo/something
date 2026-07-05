@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import QApplication, QMessageBox
 from PySide6.QtUiTools import QUiLoader
 import requests, traceback, os, sys
+from PySide6.QtGui import  QIcon
 
 # 获取资源文件路径（兼容 .py 开发环境和 PyInstaller 打包后的 exe）
 def resource_path(relative_path):
@@ -23,7 +24,7 @@ class HttpTest:
         # 原方案（仅开发环境可用）：
         # self.ui = uiLoader.load('python Qt/ui/5.ui')
         # 新方案（兼容开发环境和打包后的 exe）：
-        self.ui = uiLoader.load(resource_path('5.ui'))
+        self.ui = uiLoader.load(resource_path('ui/5.ui'))
 
         self.ui.resize(900,700)
         self.ui.box_method.addItems(['GET', 'POST', 'PUT', 'DELETE' ])
@@ -98,6 +99,8 @@ class HttpTest:
 
 
 app = QApplication([])
+# 加载 icon
+app.setWindowIcon(QIcon(resource_path('assets/logo.ico')))
 stats = HttpTest()
 stats.ui.show()
 app.exec() # PySide6 是 exec 而不是 exec_
