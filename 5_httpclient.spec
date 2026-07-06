@@ -2,10 +2,10 @@
 
 
 a = Analysis(
-    ['5_httpclient.py'],
-    pathex=[],
+    ['python Qt\\5_httpclient.py'],
+    pathex=['python Qt'],
     binaries=[],
-    datas=[],
+    datas=[('python Qt/ui', 'ui'), ('python Qt/assets', 'assets')],
     hiddenimports=['PySide6.QtXml'],
     hookspath=[],
     hooksconfig={},
@@ -32,6 +32,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon=['python Qt\\assets\\logo.ico'],
 )
 coll = COLLECT(
     exe,
