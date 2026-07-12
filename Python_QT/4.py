@@ -30,7 +30,7 @@ class Stats:
         # 从 UI 定义中动态 创建一个相应的窗口对象
         # 注意：里面的控件对象也成为窗口对象的属性了
         # 比如 self.ui.button , self.ui.textEdit
-        self.ui = QUiLoader().load('python Qt/ui/stats.ui')
+        self.ui = QUiLoader().load('ui/stats.ui')
  
         self.ui.Button.clicked.connect(self.handleCalc)
  
