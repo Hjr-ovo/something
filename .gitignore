@@ -33,4 +33,5 @@ Thumbs.db
 .clinerules
 
 # Personal study notes - do not upload to GitHub
-学习记录.md
+学习记录/
+Git提交规范.md
